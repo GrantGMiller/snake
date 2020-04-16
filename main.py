@@ -1,7 +1,6 @@
 import random
 import time
 from tkinter import Tk, Canvas, Label
-from collections import deque
 from threading import Timer
 
 root = Tk()
@@ -13,9 +12,9 @@ class Game:
     def __init__(self, root, width, height):
         self.width = width
         self.height = height
-        self._MAX_HEIGHT = height / self.SQUARE_SIZE
-        self._MAX_WIDTH = width / self.SQUARE_SIZE
-        print('self._MAX_HEIGHT =', self._MAX_HEIGHT)
+        self.MAX_HEIGHT = height / self.SQUARE_SIZE
+        self.MAX_WIDTH = width / self.SQUARE_SIZE
+        print('self.MAX_HEIGHT =', self.MAX_HEIGHT)
         self._canvas = Canvas(root, width=width, height=height, background='black')
         self._canvas.pack()
         self._snake = Snake(self)
@@ -35,18 +34,25 @@ class Game:
 
     def HandleKeyEvent(self, event):
         print('HandleKeyEvent(', event)
-        self._snake.direction = event.keysym.lower()
+        opposite = {
+            'left': 'right',
+            'up': 'down',
+            'down': 'up',
+            'right': 'left'
+        }
+        if self._snake.direction != opposite.get(event.keysym.lower()):
+            self._snake.direction = event.keysym.lower()
 
     def Update(self):
         # print('Update')
         self._snake.Move()
 
-        if self._snake.position in list(self._snake.pieces)[1:]:
+        if self._snake.position in self._snake.pieces[1:]:
             self.GameOver()
 
-        if self._MAX_WIDTH >= self._snake.position[0] < 0:
+        if self.MAX_WIDTH >= self._snake.position[0] < 0:
             self.GameOver()
-        elif self._MAX_HEIGHT >= self._snake.position[1] < 0:
+        elif self.MAX_HEIGHT >= self._snake.position[1] < 0:
             self.GameOver()
 
         for index, piece in enumerate(self._snake.pieces):
@@ -117,13 +123,12 @@ class Snake:
     def __init__(self, host):
         self._host = host
         self._length = 1
-        self.pieces = deque()
-        self.pieces.append(
+        self.pieces = [
             [
                 int((host.width / Game.SQUARE_SIZE) / 2),
                 int((host.height / Game.SQUARE_SIZE) / 2)
             ]
-        )
+        ]
         self.direction = 'up'
         self._addTailOnNextMove = False
 
@@ -157,8 +162,8 @@ class Snake:
 
 class Apple:
     def __init__(self, host, x=None, y=None):
-        self.x = x or int(random.randint(0, host.width / Game.SQUARE_SIZE))
-        self.y = y or int(random.randint(0, host.height / Game.SQUARE_SIZE))
+        self.x = x or random.randint(0, host.MAX_WIDTH)
+        self.y = y or random.randint(0, host.MAX_HEIGHT)
         self.position = [self.x, self.y]
         print('Apple.position=', self.position)
 
