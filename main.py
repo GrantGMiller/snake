@@ -30,7 +30,8 @@ class Game:
 
         root.bind("<Key>", self.HandleKeyEvent)
 
-        self._gameOver = False
+        self.gameOver = False
+        self.delay = 0.1
 
     def HandleKeyEvent(self, event):
         print('HandleKeyEvent(', event)
@@ -99,6 +100,8 @@ class Game:
                 self._apples.remove(apple)
                 self._snake.AddTail()
 
+                self.delay *= 0.98 # speed up each time you eat an apple
+
             else:
 
                 self._canvas.coords(
@@ -113,7 +116,7 @@ class Game:
 
     def GameOver(self):
         print('GAME OVER')
-        self._gameOver = True
+        self.gameOver = True
 
     def NewApple(self):
         self._apples.append(Apple(self))
@@ -162,8 +165,8 @@ class Snake:
 
 class Apple:
     def __init__(self, host, x=None, y=None):
-        self.x = x or random.randint(0, host.MAX_WIDTH)
-        self.y = y or random.randint(0, host.MAX_HEIGHT)
+        self.x = x or random.randint(0, host.MAX_WIDTH-1)
+        self.y = y or random.randint(0, host.MAX_HEIGHT-1)
         self.position = [self.x, self.y]
         print('Apple.position=', self.position)
 
@@ -173,9 +176,9 @@ game = Game(root, SIZE, SIZE)
 
 
 def Loop():
-    while game._gameOver is False:
+    while game.gameOver is False:
         game.Update()
-        time.sleep(0.1)
+        time.sleep(game.delay)
 
 
 Timer(0, Loop).start()
