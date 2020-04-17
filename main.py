@@ -100,7 +100,7 @@ class Game:
                 self._apples.remove(apple)
                 self._snake.AddTail()
 
-                self.delay *= 0.98 # speed up each time you eat an apple
+                self.delay *= 0.98  # speed up each time you eat an apple
 
             else:
 
@@ -165,8 +165,8 @@ class Snake:
 
 class Apple:
     def __init__(self, host, x=None, y=None):
-        self.x = x or random.randint(0, host.MAX_WIDTH-1)
-        self.y = y or random.randint(0, host.MAX_HEIGHT-1)
+        self.x = x or random.randint(0, host.MAX_WIDTH - 1)
+        self.y = y or random.randint(0, host.MAX_HEIGHT - 1)
         self.position = [self.x, self.y]
         print('Apple.position=', self.position)
 
